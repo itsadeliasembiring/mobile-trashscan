@@ -3,7 +3,6 @@ import './riwayat_poin.dart';
 import './detail_donasi.dart';
 import 'dart:math';
 import 'package:flutter/services.dart';
-import '../Providers/points.provider.dart';
 
 class Transaction {
   final String type;

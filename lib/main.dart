@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_wastewise/Providers/points.provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'routes.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://ikyeohhgyjpjcjmaljzj.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlreWVvaGhneWpwamNqbWFsanpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2OTE2OTIsImV4cCI6MjA2NDI2NzY5Mn0.s8hiCPcy91qNJRmtp9YPrBV2FNf-iGH3JxRqduKcXOY',
+  );
   runApp(
     MultiProvider(
       providers: [
@@ -14,6 +21,7 @@ void main() {
   );
 }
 
+final supabase = Supabase.instance.client;
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

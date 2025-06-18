@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LupaPassword extends StatefulWidget {
   @override
@@ -9,35 +10,20 @@ class _LupaPasswordState extends State<LupaPassword> {
   final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
 
-  void _resetPassword() {
-    String email = _emailController.text;
+  // Mendapatkan instance Supabase
+  final SupabaseClient _supabaseClient = Supabase.instance.client;
+
+  Future<void> _resetPassword() async {
+    String email = _emailController.text.trim();
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red, 
-          content: Text(
-            'Email harus diisi!',
-            style: TextStyle(color: Colors.white), 
-          ),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      _showErrorMessage('Email harus diisi!');
       return;
     }
     
     // Validasi format email
     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red, 
-          content: Text(
-            'Format email tidak valid!',
-            style: TextStyle(color: Colors.white), 
-          ),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      _showErrorMessage('Format email tidak valid!');
       return;
     }
 
@@ -45,22 +31,54 @@ class _LupaPasswordState extends State<LupaPassword> {
       _isLoading = true;
     });
 
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green, 
-          content: Text(
-            'Link reset password telah dikirim ke email Anda!',
-            style: TextStyle(color: Colors.white), 
-          ),
-          duration: Duration(seconds: 3),
-        ),
+    try {
+      // Menggunakan metode resetPasswordForEmail dari Supabase
+      await _supabaseClient.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'io.supabase.flutterauth://reset-callback/', // Sesuaikan dengan URL redirect Anda
       );
-    });
+
+      // Jika berhasil
+      _showSuccessMessage('Link reset password telah dikirim ke email Anda!');
+    } on AuthException catch (error) {
+      // Menangani error dari Supabase
+      _showErrorMessage(error.message);
+    } catch (error) {
+      // Menangani error umum
+      _showErrorMessage('Terjadi kesalahan. Silakan coba lagi nanti.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red, 
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.white), 
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showSuccessMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green, 
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.white), 
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void _backToLogin() {

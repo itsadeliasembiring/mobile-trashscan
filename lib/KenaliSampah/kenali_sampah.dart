@@ -4,6 +4,37 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_wastewise/KenaliSampah/deskripsi_sampah.dart'; 
 import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+// Model untuk data sampah dalam list
+class WasteItem {
+  final String idSampah;
+  final String namaSampah;
+  final String? foto;
+  final String idJenisSampah;
+  final String namaJenisSampah;
+  final String warnaTempat;
+
+  WasteItem({
+    required this.idSampah,
+    required this.namaSampah,
+    this.foto,
+    required this.idJenisSampah,
+    required this.namaJenisSampah,
+    required this.warnaTempat,
+  });
+
+  factory WasteItem.fromJson(Map<String, dynamic> json) {
+    return WasteItem(
+      idSampah: json['id_sampah'] ?? '',
+      namaSampah: json['nama_sampah'] ?? '',
+      foto: json['foto'],
+      idJenisSampah: json['jenis_sampah']['id_jenis_sampah'] ?? '',
+      namaJenisSampah: json['jenis_sampah']['nama_jenis_sampah'] ?? '',
+      warnaTempat: json['jenis_sampah']['warna_tempat_sampah'] ?? '',
+    );
+  }
+}
 
 class KenaliSampah extends StatefulWidget {
   @override
@@ -14,21 +45,52 @@ class _KenaliSampahState extends State<KenaliSampah> {
   File? _image;
   bool _scanning = false;
   bool _scanned = false;
+  String _wasteId = '';
   String _wasteType = '';
   String _errorMessage = '';
   
-  final List<String> wasteTypes = [
-    'Botol Plastik',
-    'Kaleng Aluminium',
-    'Kertas',
-    'Kardus',
-    'Sampah Organik',
-    'Elektronik',
-    'Kaca',
-    'Baterai',
-    'Tekstil',
-    'Styrofoam'
-  ];
+  List<WasteItem> wasteItems = [];
+  bool _loadingWasteData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWasteTypes();
+  }
+
+  // Load waste types from Supabase
+  Future<void> _loadWasteTypes() async {
+    setState(() {
+      _loadingWasteData = true;
+    });
+
+    try {
+      final response = await Supabase.instance.client
+          .from('sampah')
+          .select('''
+            id_sampah,
+            nama_sampah,
+            foto,
+            jenis_sampah (
+              id_jenis_sampah,
+              nama_jenis_sampah,
+              warna_tempat_sampah
+            )
+          ''')
+          .order('nama_sampah');
+
+      setState(() {
+        wasteItems = response.map<WasteItem>((item) => WasteItem.fromJson(item)).toList();
+        _loadingWasteData = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Gagal memuat data sampah: $e';
+        _loadingWasteData = false;
+      });
+      print('Error loading waste types: $e');
+    }
+  }
 
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
@@ -68,13 +130,24 @@ class _KenaliSampahState extends State<KenaliSampah> {
         // Simulasi scanning process 
         await Future.delayed(Duration(seconds: 2));
         
-        setState(() {
-          _scanning = false;
-          _scanned = true;
-          _wasteType = 'Botol Plastik';
-        });
+        // Simulasi hasil scan - pilih sampah random dari database
+        if (wasteItems.isNotEmpty) {
+          final randomWaste = wasteItems[0]; // Atau bisa random
+          setState(() {
+            _scanning = false;
+            _scanned = true;
+            _wasteId = randomWaste.idSampah;
+            _wasteType = randomWaste.namaSampah;
+          });
+        } else {
+          setState(() {
+            _scanning = false;
+            _wasteType = 'Botol Plastik'; // Fallback
+            _wasteId = 'S01'; // Fallback ID
+            _scanned = true;
+          });
+        }
       } else {
-
         // User membatalkan kamera
         setState(() {
           _scanning = false;
@@ -93,8 +166,57 @@ class _KenaliSampahState extends State<KenaliSampah> {
     // Izin kamera
     await _requestCameraPermission();
   }
+
+  Future<void> _pickFromGallery() async {
+    setState(() {
+      _scanning = true;
+      _scanned = false;
+      _errorMessage = '';
+    });
+
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+        
+        // Simulasi scanning process
+        await Future.delayed(Duration(seconds: 2));
+        
+        // Simulasi hasil scan
+        if (wasteItems.isNotEmpty) {
+          final randomWaste = wasteItems[0];
+          setState(() {
+            _scanning = false;
+            _scanned = true;
+            _wasteId = randomWaste.idSampah;
+            _wasteType = randomWaste.namaSampah;
+          });
+        } else {
+          setState(() {
+            _scanning = false;
+            _wasteType = 'Botol Plastik';
+            _wasteId = 'S01';
+            _scanned = true;
+          });
+        }
+      } else {
+        setState(() {
+          _scanning = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _scanning = false;
+        _errorMessage = 'Terjadi kesalahan: ${e.toString()}';
+      });
+    }
+  }
   
-  // Input manual
+  // Input manual dengan data dari Supabase
   void _showManualInputSheet() {
     showModalBottomSheet(
       context: context,
@@ -142,64 +264,137 @@ class _KenaliSampahState extends State<KenaliSampah> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: wasteTypes.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DeskripsiSampah(wasteType: wasteTypes[index]),
+                  if (_loadingWasteData) ...[
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: Color(0xFF3D8D7A),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Memuat data sampah...',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Color(0xFF3D8D7A),
                               ),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                            margin: EdgeInsets.only(bottom: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 36,
-                                  width: 36,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF3D8D7A),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.delete_outline,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                Text(
-                                  wasteTypes[index],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Spacer(),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.grey,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ] else if (wasteItems.isEmpty) ...[
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Tidak ada data sampah tersedia',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _loadWasteTypes,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF3D8D7A),
+                              ),
+                              child: Text(
+                                'Coba Lagi',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: wasteItems.length,
+                        itemBuilder: (context, index) {
+                          final wasteItem = wasteItems[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DeskripsiSampah(wasteId: wasteItem.idSampah),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                              margin: EdgeInsets.only(bottom: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 36,
+                                    width: 36,
+                                    decoration: BoxDecoration(
+                                      color: _getWasteColor(wasteItem.warnaTempat),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: _getIconColor(wasteItem.warnaTempat),
+                                      size: 20,
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          wasteItem.namaSampah,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Jenis: ${wasteItem.namaJenisSampah}',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ],
               ),
             );
@@ -207,6 +402,40 @@ class _KenaliSampahState extends State<KenaliSampah> {
         );
       },
     );
+  }
+
+  Color _getWasteColor(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'kuning':
+        return Colors.yellow;
+      case 'hijau':
+        return Colors.green;
+      case 'merah':
+        return Colors.red;
+      case 'biru':
+        return Colors.blue;
+      case 'putih':
+        return Colors.white;
+      case 'hitam':
+        return Colors.black87;
+      default:
+        return Color(0xFF3D8D7A);
+    }
+  }
+
+  Color _getIconColor(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'kuning':
+      case 'putih':
+        return Colors.black87;
+      case 'hijau':
+      case 'merah':
+      case 'biru':
+      case 'hitam':
+        return Colors.white;
+      default:
+        return Colors.white;
+    }
   }
 
   @override
@@ -271,6 +500,7 @@ class _KenaliSampahState extends State<KenaliSampah> {
                             SizedBox(height: 16),
                             Container(
                               padding: EdgeInsets.all(12),
+                              margin: EdgeInsets.symmetric(horizontal: 20),
                               decoration: BoxDecoration(
                                 color: Colors.red.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
@@ -334,42 +564,7 @@ class _KenaliSampahState extends State<KenaliSampah> {
                     ),
                     SizedBox(height: 16),
                     TextButton.icon(
-                      onPressed: () async {
-                        setState(() {
-                          _scanning = true;
-                          _scanned = false;
-                          _errorMessage = '';
-                        });
-
-                        try {
-                          final picker = ImagePicker();
-                          final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-                          if (pickedFile != null) {
-                            setState(() {
-                              _image = File(pickedFile.path);
-                            });
-                            
-                            // Simulasi scanning process
-                            await Future.delayed(Duration(seconds: 2));
-                            
-                            setState(() {
-                              _scanning = false;
-                              _scanned = true;
-                              _wasteType = 'Botol Plastik';
-                            });
-                          } else {
-                            setState(() {
-                              _scanning = false;
-                            });
-                          }
-                        } catch (e) {
-                          setState(() {
-                            _scanning = false;
-                            _errorMessage = 'Terjadi kesalahan: ${e.toString()}';
-                          });
-                        }
-                      },
+                      onPressed: _pickFromGallery,
                       icon: Icon(Icons.photo_library, color: Color(0xFF3D8D7A)),
                       label: Text(
                         "Pilih dari Galeri",
@@ -469,7 +664,7 @@ class _KenaliSampahState extends State<KenaliSampah> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => DeskripsiSampah(wasteType: _wasteType),
+                                  builder: (_) => DeskripsiSampah(wasteId: _wasteId),
                                 ),
                               );
                             },

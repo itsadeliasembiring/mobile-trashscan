@@ -8,21 +8,9 @@ import '../Artikel/artikel.dart';
 
 final List<Map<String, String>> wasteBankData = [
   {
-    'name': 'Bank Sampah Mulyorejo Tengah',
-    'address': 'Jl. Mulyorejo Tengah No. 67',
-    'distance': '1.4 KM',
-    'imagePath': 'assets/default-bank-sampah.png',
-  },
-  {
-    'name': 'Bank Sampah Kalijudan',
+    'name': 'Bank Sampah WasteWise',
     'address': 'Jl. Kalijudan V No. 33D',
-    'distance': '2.8 KM',
-    'imagePath': 'assets/default-bank-sampah.png',
-  },
-  {
-    'name': 'Bank Sampah Jojoran 1',
-    'address': 'Jl. Jojoran 1 Blok Z No. 101',
-    'distance': '3.9 KM',
+    'distance': '1.4 KM',
     'imagePath': 'assets/default-bank-sampah.png',
   },
 ];

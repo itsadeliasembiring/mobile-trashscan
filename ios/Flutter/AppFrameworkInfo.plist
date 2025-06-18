@@ -22,5 +22,9 @@
   <string>1.0</string>
   <key>MinimumOSVersion</key>
   <string>12.0</string>
+  <key>NSCameraUsageDescription</key>
+  <string>App memerlukan akses kamera untuk mengambil foto profil</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>App memerlukan akses galeri untuk memilih foto profil</string>
 </dict>
 </plist>
