@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # mobile_wastewise
 
 A new Flutter project.
@@ -15,3 +16,6 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 # mobile-wastewise
+=======
+# mobile-trashscan
+>>>>>>> ceb3b24bf20eb20d4dec7a72a5931d0f244756e0
