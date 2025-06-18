@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile_wastewise/Providers/points.provider.dart';
+import 'package:mobile_trashscan/Providers/points.provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'routes.dart';
+import 'Menu/menu.dart'; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: appRoutes,
+      //  home: Menu(), 
     );
   }
 }

@@ -32,12 +32,12 @@ class DetailArtikel extends StatelessWidget {
           "Detail Artikel", 
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
-            color: Color(0xFF3D8D7A), 
+            color: Color(0xFF3D7F5F), 
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        foregroundColor: Color(0xFF3D8D7A),
+        foregroundColor: Color(0xFF3D7F5F),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -101,7 +101,7 @@ class DetailArtikel extends StatelessWidget {
                       color: Color(0xFFF5F6FA),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Color(0xFF3D8D7A).withOpacity(0.1),
+                        color: Color(0xFF3D7F5F).withOpacity(0.1),
                         width: 1,
                       ),
                     ),
@@ -125,7 +125,7 @@ class DetailArtikel extends StatelessWidget {
                               Text(
                                 author,
                                 style: GoogleFonts.poppins(
-                                  color: Color(0xFF3D8D7A),
+                                  color: Color(0xFF3D7F5F),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),
@@ -192,16 +192,16 @@ class DetailArtikel extends StatelessWidget {
         width: 50,
         height: 50,
         decoration: BoxDecoration(
-          color: Color(0xFF3D8D7A).withOpacity(0.1),
+          color: Color(0xFF3D7F5F).withOpacity(0.1),
           shape: BoxShape.circle,
           border: Border.all(
-            color: Color(0xFF3D8D7A).withOpacity(0.2),
+            color: Color(0xFF3D7F5F).withOpacity(0.2),
             width: 2,
           ),
         ),
         child: Icon(
           Icons.person, 
-          color: Color(0xFF3D8D7A),
+          color: Color(0xFF3D7F5F),
           size: 24,
         ),
       );
@@ -214,7 +214,7 @@ class DetailArtikel extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: Color(0xFF3D8D7A).withOpacity(0.3),
+          color: Color(0xFF3D7F5F).withOpacity(0.3),
           width: 2,
         ),
         boxShadow: [
@@ -236,10 +236,10 @@ class DetailArtikel extends StatelessWidget {
             return Container(
               width: 50,
               height: 50,
-              color: Color(0xFF3D8D7A).withOpacity(0.1),
+              color: Color(0xFF3D7F5F).withOpacity(0.1),
               child: Icon(
                 Icons.person,
-                color: Color(0xFF3D8D7A),
+                color: Color(0xFF3D7F5F),
                 size: 24,
               ),
             );
@@ -256,7 +256,7 @@ class DetailArtikel extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D8D7A)),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D7F5F)),
                     value: loadingProgress.expectedTotalBytes != null
                         ? loadingProgress.cumulativeBytesLoaded / 
                           loadingProgress.expectedTotalBytes!
@@ -327,7 +327,7 @@ class DetailArtikel extends StatelessWidget {
             color: Colors.grey[200],
             child: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D8D7A)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D7F5F)),
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded / 
                       loadingProgress.expectedTotalBytes!

@@ -109,7 +109,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Gambar Logo
-                    Image.asset('assets/maskot_with_circle.png', height: 220),
+                    Image.asset('assets/logo-trashscan.png', height: 220),
                     const SizedBox(height: 20),
 
                     // Judul
@@ -119,7 +119,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                       style: TextStyle(
                         fontSize: 34,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF3D8D7A),
+                        color: Color(0xFF3D7F5F),
                       ),
                     ),
                     const SizedBox(height: 15.0),
@@ -162,7 +162,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3D8D7A),
+                          backgroundColor: const Color(0xFF3D7F5F),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_wastewise/Beranda/beranda.dart';
-import 'package:mobile_wastewise/Menu/menu.dart';
-import 'package:mobile_wastewise/main.dart';
+import 'package:mobile_trashscan/Beranda/beranda.dart';
+import 'package:mobile_trashscan/Menu/menu.dart';
+import 'package:mobile_trashscan/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Masuk extends StatefulWidget {
@@ -25,7 +25,7 @@ class _MasukState extends State<Masuk> {
   static const int _minPasswordLength = 6;
   
   // Color constants
-  static const Color _primaryColor = Color(0xFF3D8D7A);
+  static const Color _primaryColor = Color(0xFF3D7F5F);
   static const Color _successColor = Color(0xFF2DCC70);
   static const Color _warningColor = Colors.orange;
   static const Color _errorColor = Colors.red;
@@ -238,7 +238,7 @@ class _MasukState extends State<Masuk> {
                     children: [
                       // Gambar Logo
                       Image.asset(
-                        'assets/maskot_with_circle.png', 
+                        'assets/logo-trashscan.png', 
                         height: 220,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
@@ -256,11 +256,10 @@ class _MasukState extends State<Masuk> {
                           );
                         },
                       ),
-                      const SizedBox(height: 20),
 
                       // Judul
                       Text(
-                        'Halo,\nWasteWarriors!',
+                        'Halo,\nTrashScanners!',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.montserrat(
                           textStyle: const TextStyle(

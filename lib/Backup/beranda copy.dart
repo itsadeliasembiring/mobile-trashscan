@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Menu/menu.dart'; 
+import '../KenaliSampah/kenali_sampah.dart'; 
+import '../Artikel/artikel.dart';
 
 class Beranda extends StatelessWidget {
   const Beranda({Key? key}) : super(key: key);
 
+  // Data dummy untuk artikel, sesuaikan dengan data Anda
   final List<Map<String, String>> _articles = const [
     {
-      'image': 'assets/waste-wise-artikel.png',
+      'image': 'assets/waste-wise-artikel.png', // Ganti dengan path aset Anda
       'title': 'TrashScan: Aplikasi Cerdas untuk Deteksi Sampah dan Edukasi Pengelolaan Sampah',
     },
     {
-      'image': 'assets/waste-wise-artikel.png',
+      'image': 'assets/waste-wise-artikel.png', // Ganti dengan path aset Anda
       'title': 'Kelola Sampah dengan Cerdas: Langkah Mudah Menuju Lingkungan Bersih dan Sehat',
     },
     {
-      'image': 'assets/waste-wise-artikel.png',
+      'image': 'assets/waste-wise-artikel.png', // Ganti dengan path aset Anda
       'title': 'Sampah Plastik di Laut Ancam Ekosistem dan Biota Laut',
     },
     {
-      'image': 'assets/waste-wise-artikel.png',
+      'image': 'assets/waste-wise-artikel.png', // Ganti dengan path aset Anda
       'title': 'Aksi Bersih Pantai di Surabaya: Warga dan Relawan Bersatu Demi Laut yang Lebih Bersih',
     },
   ];
@@ -36,12 +38,14 @@ class Beranda extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 1. Top Bar (Avatar dan Notifikasi)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const CircleAvatar(
                       radius: 24,
-                      backgroundImage: AssetImage('assets/maskot-trashscan.png'),
+                      // avatar
+                      backgroundImage: AssetImage('assets/maskot-trashscan.png'), // Ganti dengan path avatar Anda
                       backgroundColor: Color(0xFFA3D1C6),
                     ),
                     Stack(
@@ -79,25 +83,27 @@ class Beranda extends StatelessWidget {
                 // 2. Kartu Selamat Datang
                 Stack(
                   children: [
+                    // 1. Gambar Latar Belakang Transparan
                     Opacity(
-                      opacity: 0.2,
+                      opacity: 0.2, // Sesuaikan tingkat transparansi di sini
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Image.asset(
-                          'assets/background-container-home-trashscan.png',
-                          height: 160,
+                          'assets/background-container-home-trashscan.png', // Ganti dengan path gambar latar belakang Anda
+                          height: 160, // Sesuaikan tinggi sesuai kebutuhan
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
+                    // 2. Konten Utama Card
                     Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      color: Colors.transparent,
+                      color: Colors.transparent, // Atur warna Card menjadi transparan
                       elevation: 0,
-                      margin: EdgeInsets.zero,
+                      margin: EdgeInsets.zero, // Hapus margin default Card jika perlu
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Row(
@@ -105,7 +111,7 @@ class Beranda extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: Image.asset(
-                                'assets/maskot-trashscan.png',
+                                'assets/maskot-trashscan.png', // Ganti dengan path maskot utama Anda
                                 height: 120,
                               ),
                             ),
@@ -169,8 +175,10 @@ class Beranda extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Pindah ke tab "Kenali Sampah" (index 1)
-                      MenuState.of(context)?.changeTab(1);
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => KenaliSampah()),
+                      );
                     },
                     icon: const Icon(
                       Icons.camera_alt_outlined, 
@@ -211,7 +219,7 @@ class Beranda extends StatelessWidget {
                       children: [
                         Text(
                           'Artikel Lingkungan',
-                            style: GoogleFonts.montserrat(
+                           style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -227,6 +235,7 @@ class Beranda extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 15),
+                        // Daftar Artikel
                         ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -238,9 +247,10 @@ class Beranda extends StatelessWidget {
                               imagePath: article['image']!,
                               title: article['title']!,
                               onTap: () {
-                                // 2. Panggil metode changeTab dari MenuState
-                                // Indeks untuk 'Artikel' adalah 2
-                                MenuState.of(context)?.changeTab(2);
+                                 Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Artikel()),
+                                );
                               },
                             );
                           },
@@ -258,8 +268,7 @@ class Beranda extends StatelessWidget {
   }
 }
 
-
-// Widget kustom untuk kartu artikel (_ArticleCard) tidak perlu diubah
+// Widget kustom untuk kartu artikel
 class _ArticleCard extends StatelessWidget {
   final String imagePath;
   final String title;

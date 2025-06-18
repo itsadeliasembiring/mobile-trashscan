@@ -178,7 +178,7 @@ class _ProfilState extends State<Profil> {
         height: 160,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFF3C9586), width: 3),
+          border: Border.all(color: const Color(0xFF3D7F5F), width: 3),
         ),
         child: ClipOval(
           child: Image.network(
@@ -191,7 +191,7 @@ class _ProfilState extends State<Profil> {
                 height: 160,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF3C9586),
+                  color: Color(0xFF3D7F5F),
                 ),
                 child: const Center(
                   child: CircularProgressIndicator(color: Colors.white),
@@ -222,8 +222,8 @@ class _ProfilState extends State<Profil> {
       height: 160,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF3C9586),
-        border: Border.all(color: const Color(0xFF3C9586), width: 3),
+        color: const Color(0xFF3D7F5F),
+        border: Border.all(color: const Color(0xFF3D7F5F), width: 3),
       ),
       child: Center(
         child: Text(
@@ -332,14 +332,14 @@ class _ProfilState extends State<Profil> {
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF3C9586),
+            color: const Color(0xFF3D7F5F),
           ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF3C9586)),
+            icon: const Icon(Icons.refresh, color: Color(0xFF3D7F5F)),
             onPressed: _forceRefresh,
             tooltip: 'Refresh Data',
           ),
@@ -350,7 +350,7 @@ class _ProfilState extends State<Profil> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _forceRefresh,
-              color: const Color(0xFF3C9586),
+              color: const Color(0xFF3D7F5F),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
@@ -364,7 +364,7 @@ class _ProfilState extends State<Profil> {
                         child: Padding(
                           padding: EdgeInsets.all(50.0),
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3C9586)),
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D7F5F)),
                           ),
                         ),
                       )
@@ -392,7 +392,7 @@ class _ProfilState extends State<Profil> {
                               ElevatedButton(
                                 onPressed: _forceRefresh,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF3C9586),
+                                  backgroundColor: const Color(0xFF3D7F5F),
                                 ),
                                 child: Text(
                                   'Coba Lagi', 
@@ -437,7 +437,7 @@ class _ProfilState extends State<Profil> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF3C9586).withOpacity(0.1),
+                          color: const Color(0xFF3D7F5F).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -446,7 +446,7 @@ class _ProfilState extends State<Profil> {
                             const Icon(
                               Icons.stars,
                               size: 18,
-                              color: Color(0xFF3C9586),
+                              color: Color(0xFF3D7F5F),
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -454,7 +454,7 @@ class _ProfilState extends State<Profil> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3C9586),
+                                color: const Color(0xFF3D7F5F),
                               ),
                             ),
                           ],
@@ -485,7 +485,7 @@ class _ProfilState extends State<Profil> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3C9586),
+                            backgroundColor: const Color(0xFF3D7F5F),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

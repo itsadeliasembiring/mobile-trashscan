@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_wastewise/Beranda/beranda.dart';
-import 'package:mobile_wastewise/Menu/menu.dart';
-import 'package:mobile_wastewise/main.dart';
+import 'package:mobile_trashscan/Beranda/beranda.dart';
+import 'package:mobile_trashscan/Menu/menu.dart';
+import 'package:mobile_trashscan/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Daftar extends StatefulWidget {
@@ -289,7 +289,7 @@ class _DaftarState extends State<Daftar> {
           await _saveUserData(response.user!.id);
           _showSnackBar(
             'Registrasi berhasil! Data pengguna telah disimpan.',
-            const Color(0xFF3D8D7A),
+            const Color(0xFF3D7F5F),
           );
           // Redirect ke halaman beranda
           Future.delayed(const Duration(seconds: 2), () {
@@ -407,16 +407,16 @@ class _DaftarState extends State<Daftar> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset('assets/maskot_with_circle.png', height: 150),
+                      Image.asset('assets/logo-trashscan.png', height: 150),
                       const SizedBox(height: 20),
                       Text(
-                        'Buat Akun\nWasteWarriors!',
+                        'Buat Akun\nTrashScanners!',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.montserrat(
                           textStyle: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF3D8D7A),
+                            color: Color(0xFF3D7F5F),
                           ),
                         )
                       ),
@@ -495,11 +495,11 @@ class _DaftarState extends State<Daftar> {
                         children: [
                           Theme(
                             data: ThemeData(
-                              unselectedWidgetColor: const Color(0xFF3D8D7A),
+                              unselectedWidgetColor: const Color(0xFF3D7F5F),
                             ),
                             child: Checkbox(
                               value: _isPrivacyChecked,
-                              activeColor: const Color(0xFF3D8D7A),
+                              activeColor: const Color(0xFF3D7F5F),
                               onChanged: _isLoading ? null : (value) {
                                 setState(() {
                                   _isPrivacyChecked = value!;
@@ -530,7 +530,7 @@ class _DaftarState extends State<Daftar> {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3D8D7A),
+                            backgroundColor: const Color(0xFF3D7F5F),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

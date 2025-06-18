@@ -12,7 +12,7 @@ class Autentikasi extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Gambar Maskot
-              Image.asset('assets/maskot_with_circle.png', height: 230),
+              Image.asset('assets/logo-trashscan.png', height: 230),
               const SizedBox(height: 35),
 
               // Judul "Selamat Datang"
@@ -23,7 +23,7 @@ class Autentikasi extends StatelessWidget {
                   textStyle: TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF3D8D7A),
+                    color: Color(0xFF3D7F5F),
                   ),
                 ),
               ),
@@ -31,12 +31,12 @@ class Autentikasi extends StatelessWidget {
 
               // Subjudul
               Text(
-                'Bijak mengelola sampah,\nHidup lebih berkah!',
+                'Our Planet in Your Hands\nJoin the Movement!',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
                   textStyle: TextStyle(
                     fontSize: 17,
-                    color: Color(0xFF80D48F),
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -48,7 +48,7 @@ class Autentikasi extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3D8D7A),
+                    backgroundColor: const Color(0xFF3D7F5F),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -73,7 +73,7 @@ class Autentikasi extends StatelessWidget {
                 height: 50,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF3D8D7A), width: 2),
+                    side: const BorderSide(color: Color(0xFF3D7F5F), width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -86,7 +86,7 @@ class Autentikasi extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 18,
                       fontWeight: FontWeight.w600, 
-                      color: Color(0xFF3D8D7A)),
+                      color: Color(0xFF3D7F5F)),
                   ),
                 ),
               ),

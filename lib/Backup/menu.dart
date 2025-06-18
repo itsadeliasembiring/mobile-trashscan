@@ -2,31 +2,28 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../Beranda/beranda.dart';
-import '../KenaliSampah/kenali_sampah.dart';
+import '../KenaliSampah/kenali_sampah.dart'; 
 import '../Artikel/artikel.dart';
 import '../Profil/profil.dart';
 
 class Menu extends StatefulWidget {
   @override
-  MenuState createState() => MenuState();
+  _MenuState createState() => _MenuState();
 }
 
-
-class MenuState extends State<Menu> {
+class _MenuState extends State<Menu> {
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   int _currentIndex = 0;
 
-  static MenuState? of(BuildContext context) {
-    return context.findAncestorStateOfType<MenuState>();
+  static _MenuState? of(BuildContext context) {
+    final state = context.findAncestorStateOfType<_MenuState>();
+    return state;
   }
 
   void changeTab(int index) {
     setState(() {
       _currentIndex = index;
     });
-    
-    final navigationState = navigationKey.currentState;
-    navigationState?.setPage(index);
   }
 
   final List<Widget> _screens = [
@@ -77,7 +74,7 @@ class MenuState extends State<Menu> {
           ],
         )),
         height: 65,
-        onTap: changeTab,
+        onTap: (index) => setState(() => _currentIndex = index),
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: Color(0xFF3D7F5F),
       ),

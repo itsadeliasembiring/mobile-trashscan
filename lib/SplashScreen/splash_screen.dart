@@ -47,26 +47,26 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/splash-screen-maskot.gif',
+                  'assets/logo-trashscan.png',
                   gaplessPlayback: true,
                   width: 276,
                   height: 276,
                 ),
                 Transform.translate(
-                  offset: const Offset(0, -30),
+                  offset: const Offset(0, -20),
                   child: Text(
-                    'WasteWise',
+                    'TrashScan',
                     style: GoogleFonts.montserrat(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF3D8D7A),
+                      color: Color(0xFF3D7F5F),
                     ),
                   ),
                 ),
                 Transform.translate(
-                  offset: const Offset(0, -35),
+                  offset: const Offset(0, -30),
                   child: Text(
-                    '“Ubah Sampah Jadi Berkah”',
+                    '“Our Planet in Your Hands”',
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       color: Colors.black,

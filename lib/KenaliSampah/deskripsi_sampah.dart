@@ -113,7 +113,7 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
           "Penjelasan Sampah",
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
-            color: Color(0xFF3D8D7A),
+            color: Color(0xFF3D7F5F),
           ),
         ),
         centerTitle: true,
@@ -134,14 +134,14 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            color: Color(0xFF3D8D7A),
+            color: Color(0xFF3D7F5F),
           ),
           SizedBox(height: 16),
           Text(
             'Memuat data...',
             style: GoogleFonts.poppins(
               fontSize: 16,
-              color: Color(0xFF3D8D7A),
+              color: Color(0xFF3D7F5F),
             ),
           ),
         ],
@@ -180,7 +180,7 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
                 _loadWasteData();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF3D8D7A),
+                backgroundColor: Color(0xFF3D7F5F),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -335,14 +335,14 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
             //Container(
               //padding: EdgeInsets.all(16),
               //decoration: BoxDecoration(
-                //color: Color(0xFF3D8D7A).withOpacity(0.1),
+                //color: Color(0xFF3D7F5F).withOpacity(0.1),
                 //borderRadius: BorderRadius.circular(12),
               //),
               //child: Row(
                 //children: [
                   //Icon(
                     //Icons.star,
-                    //color: Color(0xFF3D8D7A),
+                    //color: Color(0xFF3D7F5F),
                     //size: 24,
                   //),
                   //SizedBox(width: 8),
@@ -351,7 +351,7 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
                     //style: GoogleFonts.poppins(
                       //fontSize: 16,
                       //fontWeight: FontWeight.w600,
-                      //color: Color(0xFF3D8D7A),
+                      //color: Color(0xFF3D7F5F),
                     //),
                   //),
                 //],
@@ -367,7 +367,7 @@ class _DeskripsiSampahState extends State<DeskripsiSampah> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF3D8D7A),
+                  backgroundColor: Color(0xFF3D7F5F),
                   padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

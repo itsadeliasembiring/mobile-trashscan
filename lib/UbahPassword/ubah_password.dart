@@ -187,14 +187,14 @@ class _UbahPassword extends State<UbahPassword> {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             fontSize: 18,
-            color: const Color(0xFF3C9586),
+            color: const Color(0xFF3D7F5F),
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF3C9586)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF3D7F5F)),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -210,14 +210,14 @@ class _UbahPassword extends State<UbahPassword> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3C9586).withOpacity(0.1),
+                    color: const Color(0xFF3D7F5F).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.security,
-                        color: Color(0xFF3C9586),
+                        color: Color(0xFF3D7F5F),
                         size: 24,
                       ),
                       const SizedBox(width: 12),
@@ -230,7 +230,7 @@ class _UbahPassword extends State<UbahPassword> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3C9586),
+                                color: const Color(0xFF3D7F5F),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -311,7 +311,7 @@ class _UbahPassword extends State<UbahPassword> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3C9586),
+                      backgroundColor: const Color(0xFF3D7F5F),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -444,7 +444,7 @@ class _UbahPassword extends State<UbahPassword> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF3C9586), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF3D7F5F), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:mobile_wastewise/Artikel/detail_artikel.dart';
-import 'package:mobile_wastewise/KenaliSampah/kenali_sampah.dart';
+import 'package:mobile_trashscan/Artikel/detail_artikel.dart';
+import 'package:mobile_trashscan/KenaliSampah/kenali_sampah.dart';
 import 'package:intl/intl.dart';
+import '../Menu/menu.dart'; 
 
 class Artikel extends StatefulWidget {
   @override
@@ -136,7 +137,7 @@ class _ArtikelState extends State<Artikel> {
           "Artikel",
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF3D8D7A),
+            color: const Color(0xFF3D7F5F),
           ),
         ),
         centerTitle: true,
@@ -145,14 +146,14 @@ class _ArtikelState extends State<Artikel> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF3D8D7A)),
+            icon: const Icon(Icons.refresh, color: Color(0xFF3D7F5F)),
             onPressed: _loadArtikels,
           ),
         ],
       ),
       body: RefreshIndicator(
         onRefresh: _loadArtikels,
-        color: const Color(0xFF3D8D7A),
+        color: const Color(0xFF3D7F5F),
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           children: [
@@ -186,7 +187,7 @@ class _ArtikelState extends State<Artikel> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF3D8D7A).withOpacity(0.3),
+              color: const Color(0xFF3D7F5F).withOpacity(0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -195,7 +196,7 @@ class _ArtikelState extends State<Artikel> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF3D8D7A),
+              Color(0xFF3D7F5F),
               Color(0xFF2A6358),
             ],
           ),
@@ -256,7 +257,7 @@ class _ArtikelState extends State<Artikel> {
       ),
       child: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF3D8D7A),
+          color: Color(0xFF3D7F5F),
           shape: BoxShape.circle,
         ),
         child: const Icon(
@@ -293,7 +294,7 @@ class _ArtikelState extends State<Artikel> {
           onPressed: _navigateToKenaliSampah,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF3D8D7A),
+            foregroundColor: const Color(0xFF3D7F5F),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
@@ -359,7 +360,7 @@ class _ArtikelState extends State<Artikel> {
         child: Column(
           children: [
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D8D7A)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D7F5F)),
             ),
             SizedBox(height: 16),
             Text(
@@ -408,7 +409,7 @@ class _ArtikelState extends State<Artikel> {
             ElevatedButton(
               onPressed: _loadArtikels,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3D8D7A),
+                backgroundColor: const Color(0xFF3D7F5F),
                 foregroundColor: Colors.white,
               ),
               child: const Text("Coba Lagi"),
@@ -524,7 +525,7 @@ class _ArtikelState extends State<Artikel> {
       color: Colors.grey[300],
       child: const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D8D7A)),
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3D7F5F)),
         ),
       ),
     );
@@ -574,7 +575,7 @@ class _ArtikelState extends State<Artikel> {
                       _getAuthorName(artikel),
                       style: GoogleFonts.inter(
                         fontSize: 12, 
-                        color: const Color(0xFF3D8D7A),
+                        color: const Color(0xFF3D7F5F),
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -596,11 +597,11 @@ class _ArtikelState extends State<Artikel> {
       // Default avatar jika tidak ada foto
       return CircleAvatar(
         radius: 12,
-        backgroundColor: const Color(0xFF3D8D7A).withOpacity(0.1),
+        backgroundColor: const Color(0xFF3D7F5F).withOpacity(0.1),
         child: Icon(
           Icons.person,
           size: 12,
-          color: const Color(0xFF3D8D7A),
+          color: const Color(0xFF3D7F5F),
         ),
       );
     }
@@ -625,12 +626,13 @@ class _ArtikelState extends State<Artikel> {
   }
 
   void _navigateToKenaliSampah() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => KenaliSampah(),
-      ),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => KenaliSampah(),
+    //   ),
+    // );
+    MenuState.of(context)?.changeTab(1);
   }
 
   void _navigateToDetailArtikel(Map<String, dynamic> artikel) {

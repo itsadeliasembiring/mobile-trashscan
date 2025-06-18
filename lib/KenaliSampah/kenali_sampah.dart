@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mobile_wastewise/KenaliSampah/deskripsi_sampah.dart'; 
-import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mobile_trashscan/KenaliSampah/deskripsi_sampah.dart';
 
-// Model untuk data sampah dalam list
+// --- Integrasi Gemini Chatbot ---
+import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+
+// Model untuk data sampah dalam list manual
 class WasteItem {
   final String idSampah;
   final String namaSampah;
@@ -37,29 +38,30 @@ class WasteItem {
 }
 
 class KenaliSampah extends StatefulWidget {
+  const KenaliSampah({super.key});
+
   @override
   _KenaliSampahState createState() => _KenaliSampahState();
 }
 
 class _KenaliSampahState extends State<KenaliSampah> {
-  File? _image;
-  bool _scanning = false;
-  bool _scanned = false;
-  String _wasteId = '';
-  String _wasteType = '';
-  String _errorMessage = '';
-  
+  // --- KONFIGURASI GEMINI ---
+  final String _apiKey = "AIzaSyCYUQwJmn6RIyqr59AFm_cw-JsDX-rM5uM";
+
+  // State untuk data sampah (input manual)
   List<WasteItem> wasteItems = [];
   bool _loadingWasteData = false;
 
   @override
   void initState() {
     super.initState();
+    // Memuat data sampah untuk fitur input manual saat halaman pertama kali dibuka
     _loadWasteTypes();
   }
 
-  // Load waste types from Supabase
+  // Fungsi untuk memuat data dari Supabase
   Future<void> _loadWasteTypes() async {
+    if (!mounted) return;
     setState(() {
       _loadingWasteData = true;
     });
@@ -79,145 +81,40 @@ class _KenaliSampahState extends State<KenaliSampah> {
           ''')
           .order('nama_sampah');
 
-      setState(() {
-        wasteItems = response.map<WasteItem>((item) => WasteItem.fromJson(item)).toList();
-        _loadingWasteData = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Gagal memuat data sampah: $e';
-        _loadingWasteData = false;
-      });
-      print('Error loading waste types: $e');
-    }
-  }
-
-  Future<void> _requestCameraPermission() async {
-    final status = await Permission.camera.request();
-    if (status.isGranted) {
-      _openCamera();
-    } else if (status.isDenied) {
-      setState(() {
-        _errorMessage = 'Izin kamera ditolak. Silakan berikan izin di pengaturan perangkat Anda.';
-      });
-    } else if (status.isPermanentlyDenied) {
-      setState(() {
-        _errorMessage = 'Izin kamera ditolak secara permanen. Silakan aktifkan di pengaturan perangkat Anda.';
-      });
-      await openAppSettings();
-    }
-  }
-
-  Future<void> _openCamera() async {
-    setState(() {
-      _scanning = true;
-      _scanned = false;
-      _errorMessage = '';
-    });
-
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.rear,
-      );
-
-      if (pickedFile != null) {
+      if (mounted) {
         setState(() {
-          _image = File(pickedFile.path);
-        });
-        
-        // Simulasi scanning process 
-        await Future.delayed(Duration(seconds: 2));
-        
-        // Simulasi hasil scan - pilih sampah random dari database
-        if (wasteItems.isNotEmpty) {
-          final randomWaste = wasteItems[0]; // Atau bisa random
-          setState(() {
-            _scanning = false;
-            _scanned = true;
-            _wasteId = randomWaste.idSampah;
-            _wasteType = randomWaste.namaSampah;
-          });
-        } else {
-          setState(() {
-            _scanning = false;
-            _wasteType = 'Botol Plastik'; // Fallback
-            _wasteId = 'S01'; // Fallback ID
-            _scanned = true;
-          });
-        }
-      } else {
-        // User membatalkan kamera
-        setState(() {
-          _scanning = false;
-          _errorMessage = 'Pengambilan gambar dibatalkan';
+          wasteItems =
+              response.map<WasteItem>((item) => WasteItem.fromJson(item)).toList();
+          _loadingWasteData = false;
         });
       }
     } catch (e) {
-      setState(() {
-        _scanning = false;
-        _errorMessage = 'Terjadi kesalahan saat membuka kamera: ${e.toString()}';
-      });
-    }
-  }
-
-  Future<void> _getImage() async {
-    // Izin kamera
-    await _requestCameraPermission();
-  }
-
-  Future<void> _pickFromGallery() async {
-    setState(() {
-      _scanning = true;
-      _scanned = false;
-      _errorMessage = '';
-    });
-
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-      if (pickedFile != null) {
+      if (mounted) {
         setState(() {
-          _image = File(pickedFile.path);
+          _loadingWasteData = false;
         });
-        
-        // Simulasi scanning process
-        await Future.delayed(Duration(seconds: 2));
-        
-        // Simulasi hasil scan
-        if (wasteItems.isNotEmpty) {
-          final randomWaste = wasteItems[0];
-          setState(() {
-            _scanning = false;
-            _scanned = true;
-            _wasteId = randomWaste.idSampah;
-            _wasteType = randomWaste.namaSampah;
-          });
-        } else {
-          setState(() {
-            _scanning = false;
-            _wasteType = 'Botol Plastik';
-            _wasteId = 'S01';
-            _scanned = true;
-          });
-        }
-      } else {
-        setState(() {
-          _scanning = false;
-        });
+        print('Error loading waste types: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Gagal memuat data sampah: $e'),
+          backgroundColor: Colors.red,
+        ));
       }
-    } catch (e) {
-      setState(() {
-        _scanning = false;
-        _errorMessage = 'Terjadi kesalahan: ${e.toString()}';
-      });
     }
   }
-  
-  // Input manual dengan data dari Supabase
+
+  // Fungsi untuk menampilkan bottom sheet input manual
   void _showManualInputSheet() {
+    if (_loadingWasteData) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Sedang memuat data sampah, harap tunggu...'),
+      ));
+      return;
+    }
+    // Coba muat ulang jika data kosong, untuk memastikan data terbaru
+    if (wasteItems.isEmpty) {
+      _loadWasteTypes();
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -227,14 +124,14 @@ class _KenaliSampahState extends State<KenaliSampah> {
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.7,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                 ),
               ),
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -246,16 +143,16 @@ class _KenaliSampahState extends State<KenaliSampah> {
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF3D8D7A),
+                          color: const Color(0xFF3D7F5F),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close, color: Colors.grey),
+                        icon: const Icon(Icons.close, color: Colors.grey),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
                     "Silakan pilih jenis sampah yang ingin Anda ketahui:",
                     style: GoogleFonts.poppins(
@@ -263,65 +160,40 @@ class _KenaliSampahState extends State<KenaliSampah> {
                       color: Colors.black54,
                     ),
                   ),
-                  SizedBox(height: 16),
-                  if (_loadingWasteData) ...[
-                    Expanded(
+                  const SizedBox(height: 16),
+                  if (_loadingWasteData)
+                    const Expanded(
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: Color(0xFF3D8D7A),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Memuat data sampah...',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Color(0xFF3D8D7A),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: CircularProgressIndicator(color: Color(0xFF3D7F5F)),
                       ),
-                    ),
-                  ] else if (wasteItems.isEmpty) ...[
+                    )
+                  else if (wasteItems.isEmpty)
                     Expanded(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 16),
+                            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                            const SizedBox(height: 16),
                             Text(
-                              'Tidak ada data sampah tersedia',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
+                              'Gagal memuat atau tidak ada data.',
+                              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: _loadWasteTypes,
+                              onPressed: () {
+                                _loadWasteTypes().then((_) => setModalState(() {}));
+                              },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF3D8D7A),
-                              ),
-                              child: Text(
-                                'Coba Lagi',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                ),
-                              ),
+                                  backgroundColor: const Color(0xFF3D7F5F)),
+                              child: Text('Coba Lagi',
+                                  style: GoogleFonts.poppins(color: Colors.white)),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ] else ...[
+                    )
+                  else
                     Expanded(
                       child: ListView.builder(
                         itemCount: wasteItems.length,
@@ -333,13 +205,15 @@ class _KenaliSampahState extends State<KenaliSampah> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => DeskripsiSampah(wasteId: wasteItem.idSampah),
+                                  builder: (_) =>
+                                      DeskripsiSampah(wasteId: wasteItem.idSampah),
                                 ),
                               );
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                              margin: EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
                                 color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(12),
@@ -354,13 +228,11 @@ class _KenaliSampahState extends State<KenaliSampah> {
                                       color: _getWasteColor(wasteItem.warnaTempat),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
-                                      Icons.delete_outline,
-                                      color: _getIconColor(wasteItem.warnaTempat),
-                                      size: 20,
-                                    ),
+                                    child: Icon(Icons.delete_outline,
+                                        color: _getIconColor(wasteItem.warnaTempat),
+                                        size: 20),
                                   ),
-                                  SizedBox(width: 16),
+                                  const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,25 +240,19 @@ class _KenaliSampahState extends State<KenaliSampah> {
                                         Text(
                                           wasteItem.namaSampah,
                                           style: GoogleFonts.poppins(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                         Text(
                                           'Jenis: ${wasteItem.namaJenisSampah}',
                                           style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: Colors.grey[600],
-                                          ),
+                                              fontSize: 12, color: Colors.grey[600]),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.grey,
-                                    size: 16,
-                                  ),
+                                  const Icon(Icons.arrow_forward_ios,
+                                      color: Colors.grey, size: 16),
                                 ],
                               ),
                             ),
@@ -394,7 +260,6 @@ class _KenaliSampahState extends State<KenaliSampah> {
                         },
                       ),
                     ),
-                  ],
                 ],
               ),
             );
@@ -404,35 +269,24 @@ class _KenaliSampahState extends State<KenaliSampah> {
     );
   }
 
+  // Fungsi helper warna
   Color _getWasteColor(String colorName) {
     switch (colorName.toLowerCase()) {
-      case 'kuning':
-        return Colors.yellow;
-      case 'hijau':
-        return Colors.green;
-      case 'merah':
-        return Colors.red;
-      case 'biru':
-        return Colors.blue;
-      case 'putih':
-        return Colors.white;
-      case 'hitam':
-        return Colors.black87;
-      default:
-        return Color(0xFF3D8D7A);
+      case 'kuning': return Colors.yellow.shade600;
+      case 'hijau': return Colors.green;
+      case 'merah': return Colors.red;
+      case 'biru': return Colors.blue;
+      case 'putih': return Colors.grey.shade200;
+      case 'hitam': return Colors.black87;
+      default: return const Color(0xFF3D7F5F);
     }
   }
 
   Color _getIconColor(String colorName) {
-    switch (colorName.toLowerCase()) {
+     switch (colorName.toLowerCase()) {
       case 'kuning':
       case 'putih':
         return Colors.black87;
-      case 'hijau':
-      case 'merah':
-      case 'biru':
-      case 'hitam':
-        return Colors.white;
       default:
         return Colors.white;
     }
@@ -441,325 +295,112 @@ class _KenaliSampahState extends State<KenaliSampah> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F6FA),
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
         title: Text(
-          "Edukasi Sampah",
+          "Kenali Sampah",
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
-            color: Color(0xFF3D8D7A),
+            color: const Color(0xFF3D7F5F),
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          // Custom Manual Button at the top
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: OutlinedButton(
+              onPressed: _showManualInputSheet,
+              style: OutlinedButton.styleFrom(
+                backgroundColor:Color(0xFF3D7F5F),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                side: const BorderSide(color: Color(0xFF3D7F5F)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (_image == null) ...[
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Color(0xFF3D8D7A),
-                          width: 2,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera_alt_rounded,
-                            size: 64,
-                            color: Color(0xFF3D8D7A),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Arahkan sampah ke kamera\nuntuk di scan",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          if (_errorMessage.isNotEmpty) ...[
-                            SizedBox(height: 16),
-                            Container(
-                              padding: EdgeInsets.all(12),
-                              margin: EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                _errorMessage,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                  const Icon(Icons.list, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Pilih Sampah Manual",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
-                    SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _getImage,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF3D8D7A),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            "Buka Kamera",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: _showManualInputSheet,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: Color(0xFF3D8D7A), width: 1),
-                            ),
-                          ),
-                          child: Text(
-                            "Input Manual",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D8D7A),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    TextButton.icon(
-                      onPressed: _pickFromGallery,
-                      icon: Icon(Icons.photo_library, color: Color(0xFF3D8D7A)),
-                      label: Text(
-                        "Pilih dari Galeri",
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Color(0xFF3D8D7A),
-                        ),
-                      ),
-                    ),
-                  ] else ...[
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 350,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Color(0xFF3D8D7A),
-                              width: 2,
-                            ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              _image!,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        if (_scanning)
-                          Container(
-                            height: 350,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(color: Colors.white),
-                                SizedBox(height: 16),
-                                Text(
-                                  "Mengidentifikasi sampah...",
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    if (_scanned) ...[
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              "Teridentifikasi : $_wasteType",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DeskripsiSampah(wasteId: _wasteId),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF3D8D7A),
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              "Lihat Penjelasan",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          OutlinedButton(
-                            onPressed: _showManualInputSheet,
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Color(0xFF3D8D7A)),
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              "Input Manual",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF3D8D7A),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        "Scan berhasil! Sampah telah teridentifikasi.",
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ] else ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _getImage,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF3D8D7A),
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              "Scan Ulang",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          OutlinedButton(
-                            onPressed: _showManualInputSheet,
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Color(0xFF3D8D7A)),
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              "Input Manual",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF3D8D7A),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
+                  ),
                 ],
               ),
+            ),
+          ),
+          // Chat View
+          Expanded(
+            child: LlmChatView(
+              welcomeMessage:
+                  "Halo! Saya TrashScan Bot siap membantu Anda. Ajukan pertanyaan seputar sampah dan daur ulang, atau gunakan tombol 'Manual' di atas untuk melihat daftar sampah.",
+             
+              suggestions: const [
+                "Apa itu sampah organik?",
+                "Jelaskan konsep 3R!",
+                "Bagaimana cara mengolah sampah plastik?",
+              ],
+
+              provider: GeminiProvider(
+                model: GenerativeModel(
+                  model: "gemini-1.5-flash-latest",
+                  apiKey: _apiKey,
+                  systemInstruction: Content.system(
+                    "Anda adalah 'TrashScan Bot', asisten virtual yang ramah dan ahli dalam pengelolaan sampah, daur ulang, dan isu lingkungan di Indonesia. "
+                    "Tugas Anda adalah menjawab pertanyaan pengguna HANYA yang berkaitan dengan topik-topik tersebut. "
+                    "Jika pengguna bertanya di luar topik (misal: kesehatan, politik, resep masakan), jawab dengan sopan: 'Maaf, saya hanya bisa menjawab pertanyaan seputar pengelolaan sampah dan lingkungan.' "
+                    "Berikan jawaban yang jelas, singkat, dan mudah dimengerti."
+                  ),
+                ),
+              ),
+
+              // Use basic styling that's likely to be supported
+              style: 
+                LlmChatViewStyle(
+                  backgroundColor: const Color(0xFFF5F6FA),
+                  // bot
+                  llmMessageStyle: LlmMessageStyle(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  // user
+                  userMessageStyle: UserMessageStyle(
+                    decoration: BoxDecoration(
+                      color: Color(0xFF3D7F5F),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  suggestionStyle: SuggestionStyle(
+                    decoration: BoxDecoration(
+                      color: Color(0xFF3D7F5F),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
             ),
           ),
         ],

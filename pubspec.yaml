@@ -1,4 +1,4 @@
-name: mobile_wastewise
+name: mobile_trashscan
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -46,6 +46,8 @@ dependencies:
   supabase_flutter: ^2.9.1
   file_picker: ^10.1.9
   shared_preferences: ^2.5.3
+  google_generative_ai: ^0.4.7
+  flutter_ai_toolkit: ^0.6.8
   # cached_network_image: ^3.4.1
 
 dev_dependencies:
