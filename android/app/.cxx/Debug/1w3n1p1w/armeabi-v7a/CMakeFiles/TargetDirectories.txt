@@ -1,0 +1,2 @@
+C:/Users/asusv/mobile-trashscan/android/app/.cxx/Debug/1w3n1p1w/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/asusv/mobile-trashscan/android/app/.cxx/Debug/1w3n1p1w/armeabi-v7a/CMakeFiles/rebuild_cache.dir

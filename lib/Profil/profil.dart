@@ -82,7 +82,7 @@ class _ProfilState extends State<Profil> {
         setState(() {
           userData = {
             'nama_lengkap': currentUser.userMetadata?['full_name'] ?? currentUser.email?.split('@')[0] ?? 'Pengguna',
-            'total_poin': 0,
+            // 'total_poin': 0,
             'foto': null,
             'nomor_telepon': null,
             'jenis_kelamin': null,
@@ -433,33 +433,33 @@ class _ProfilState extends State<Profil> {
 
                       const SizedBox(height: 8),
 
-                      // Points
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3D7F5F).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.stars,
-                              size: 18,
-                              color: Color(0xFF3D7F5F),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${userData?['total_poin'] ?? 0} poin',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3D7F5F),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // // Points
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      //   decoration: BoxDecoration(
+                      //     color: const Color(0xFF3D7F5F).withOpacity(0.1),
+                      //     borderRadius: BorderRadius.circular(20),
+                      //   ),
+                      //   child: Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       const Icon(
+                      //         Icons.stars,
+                      //         size: 18,
+                      //         color: Color(0xFF3D7F5F),
+                      //       ),
+                      //       const SizedBox(width: 4),
+                      //       Text(
+                      //         '${userData?['total_poin'] ?? 0} poin',
+                      //         style: GoogleFonts.poppins(
+                      //           fontSize: 16,
+                      //           fontWeight: FontWeight.w600,
+                      //           color: const Color(0xFF3D7F5F),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
                       const SizedBox(height: 16),
 
