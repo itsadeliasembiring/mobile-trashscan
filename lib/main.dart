@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: appRoutes,
-      //  home: Menu(), 
+      //  home: Menu(),
     );
   }
 }
